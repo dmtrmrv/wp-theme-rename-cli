@@ -1,0 +1,16 @@
+{
+  "name": "wp-theme-rename-cli",
+  "version": "0.1.0",
+  "description": "Command line tool for renaming WordPress themes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "WordPress",
+    "Theme",
+    "Rename"
+  ],
+  "author": "Dmitry Mayorov",
+  "license": "GPLv2 (or later)"
+}
