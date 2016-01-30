@@ -5,20 +5,20 @@ var fs = require( 'fs' );
 
 // Process user arguments.
 var userArgs = process.argv.slice( 2 );
-	newSLug  = userArgs[0];
-	newName  = userArgs[1];
+newSLug  = userArgs[0];
+newName  = userArgs[1];
 
 // Current theme details.
-var dir,
-	stylesheet,
-	oldSlug,
-	oldName;
+var themeDir,
+stylesheet,
+oldSlug,
+oldName;
 
-// Read the directory.
-dir = fs.readdirSync( '.' );
+// Read the themeDirectory.
+themeDir = fs.readdirSync( '.' );
 
 // If we have stylesheet, read it.
-if ( typeof dir == 'object' && dir.indexOf( 'style.css' ) != -1 ) {
+if ( typeof themeDir == 'object' && themeDir.indexOf( 'style.css' ) != -1 ) {
 	stylesheet = fs.readFileSync( 'style.css', 'UTF8' );
 }
 
@@ -40,7 +40,25 @@ if ( stylesheet && stylesheet.search( /Theme Name:.*$/m ) != -1 ) {
 	oldName = oldName[0].replace( 'Theme Name:', '' ).trim();
 }
 
-function renameTheme() {
+function replaceStrings( file ) {
+	console.log( file );
 }
 
-renameTheme();
+function walkSync( dir ) {
+
+	if ( dir[ dir.length-1 ] != '/' ) {
+		dir=dir.concat('/')
+	}
+
+	files = fs.readdirSync( dir );
+	
+	files.forEach(function(file) {
+		if ( fs.statSync(dir + file ).isDirectory() ) {
+			walkSync( dir + file + '/' );
+		} else if ( fs.statSync(dir + file ).isFile() ) {
+			replaceStrings( dir + file );
+		}
+	} );
+};
+
+walkSync( '.' );
