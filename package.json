@@ -12,5 +12,9 @@
     "Rename"
   ],
   "author": "Dmitry Mayorov",
-  "license": "GPLv2 (or later)"
+  "license": "GPLv2 (or later)",
+  "preferGlobal": true,
+  "bin": {
+    "wp-theme-rename": "index.js"
+  }
 }
