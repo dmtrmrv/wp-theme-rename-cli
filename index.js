@@ -1,18 +1,42 @@
 #! /usr/bin/env node
 
 // Dependencies.
-var fs = require( 'fs' );
+var fs   = require( 'fs' );
+var path = require( 'path' );
 
 // Process user arguments.
 var userArgs = process.argv.slice( 2 );
-newSLug  = userArgs[0];
-newName  = userArgs[1];
+	newSlug  = userArgs[0];
+	newName  = userArgs[1];
 
 // Current theme details.
-var themeDir,
-stylesheet,
-oldSlug,
-oldName;
+var themeDir, stylesheet, oldSlug, oldName;
+
+// Excluded folders.
+var excDir = [
+	'./node_modules',
+	'./fonts',
+	'./assets/fonts'
+]
+
+// Excluded files.
+var excFile = [
+	'Gruntfile.js',
+]
+
+// File extensions to work with.
+var incExt = [
+	'.php',
+	'.html',
+	'.js',
+	'.json',
+	'.css',
+	'.scss',
+	'.sass',
+	'.txt',
+	'.md',
+	'.pot'
+]
 
 // Read the themeDirectory.
 themeDir = fs.readdirSync( '.' );
@@ -40,25 +64,114 @@ if ( stylesheet && stylesheet.search( /Theme Name:.*$/m ) != -1 ) {
 	oldName = oldName[0].replace( 'Theme Name:', '' ).trim();
 }
 
+// Replace tasks.
 function replaceStrings( file ) {
-	console.log( file );
+	// Get the content of the file.
+	var content = fs.readFileSync( file, 'UTF8' );
+
+	// Replace the prefixes.
+	content = content.replace(
+		new RegExp( oldSlug + '_', 'g' ),
+		newSlug + '_'
+	);
+
+	// Replace the handles.
+	content = content.replace(
+		new RegExp( oldSlug + '-', 'g' ),
+		newSlug + '-'
+	);
+
+	// Replace text domain.
+	content = content.replace(
+		new RegExp( '\'' + oldSlug + '\'', 'g' ),
+		'\'' + newSlug + '\''
+	);
+
+	// Replace Constants.
+	content = content.replace(
+		new RegExp( oldSlug.toUpperCase(), 'g' ),
+		newSlug.toUpperCase()
+	);
+
+	// Docblocks space before.
+	content = content.replace(
+		new RegExp( ' ' + oldName, 'g' ),
+		' ' + newName
+	);
+
+	// Docblocks space after.
+	content = content.replace(
+		new RegExp( oldName + ' ', 'g' ),
+		newName + ' '
+	);
+
+	// Docblocks space before lowercase.
+	content = content.replace(
+		new RegExp( ' ' + oldSlug, 'g' ),
+		' ' + newSlug
+	);
+
+	// Paths.
+	content = content.replace(
+		new RegExp( '/' + oldSlug, 'g' ),
+		'/' + newSlug
+	);
+
+	// Strings in single quotes lowercase.
+	content = content.replace(
+		new RegExp( '\'' + oldSlug + '\'', 'g' ),
+		'\'' + newSlug + '\''
+	);
+
+	// Strings in single quotes Uppercase.
+	content = content.replace(
+		new RegExp( '\'' + oldName + '\'', 'g' ),
+		'\'' + newName + '\''
+	);
+
+	// Strings in double quotes lowercase.
+	content = content.replace(
+		new RegExp( '\"' + oldSlug + '\"', 'g' ),
+		'\"' + newSlug + '\"'
+	);
+
+	// Strings in double quotes Uppercase.
+	content = content.replace(
+		new RegExp( '\"' + oldName + '\"', 'g' ),
+		'\"' + newName + '\"'
+	);
+
+	// Markdown headings.
+	content = content.replace(
+		new RegExp( '#' + oldName, 'g' ),
+		'#' + newName
+	);
+
+
+
+	// Write the file.
+	fs.writeFileSync( file, content, 'UTF8' );
 }
 
-function walkSync( dir ) {
+function walkDir( dir ) {
 
 	if ( dir[ dir.length-1 ] != '/' ) {
-		dir=dir.concat('/')
+		dir = dir.concat('/')
 	}
 
-	files = fs.readdirSync( dir );
+	items = fs.readdirSync( dir );
 	
-	files.forEach(function(file) {
-		if ( fs.statSync(dir + file ).isDirectory() ) {
-			walkSync( dir + file + '/' );
-		} else if ( fs.statSync(dir + file ).isFile() ) {
-			replaceStrings( dir + file );
+	items.forEach( function( item ) {
+		if ( fs.statSync( dir + item ).isDirectory() ) {
+			if ( excDir.indexOf( dir + item ) == -1 ) {
+				walkDir( dir + item + '/' );
+			} 
+		} else if ( fs.statSync( dir + item ).isFile() ) {
+			if ( incExt.indexOf( path.extname( dir + item ) ) != -1 ) {
+				replaceStrings( dir + item );
+			}
 		}
 	} );
 };
 
-walkSync( '.' );
+walkDir( '.' );
