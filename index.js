@@ -135,8 +135,6 @@ function replaceStrings( file ) {
 	// Get the content of the file.
 	var content = fs.readFileSync( file, 'UTF8' );
 
-	console.log( oldSlug, oldName, newSlug, newName );
-
 	var old = content;
 
 	// Replace the prefixes.
@@ -216,8 +214,6 @@ function replaceStrings( file ) {
 		new RegExp( '#' + oldName, 'g' ),
 		'#' + newName
 	);
-
-	console.log ( content == old );
 
 	// Write the file.
 	fs.writeFileSync( file, content, 'UTF8' );
