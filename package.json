@@ -6,13 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamdmitrymayorov/wp-theme-rename-cli.git"
+  },
   "keywords": [
     "WordPress",
     "Theme",
     "Rename"
   ],
-  "author": "Dmitry Mayorov",
+  "author": "Dmitry Mayorov (https://themepatio.com)",
   "license": "GPLv2 (or later)",
+  "bugs": {
+    "url": "https://github.com/iamdmitrymayorov/wp-theme-rename-cli.git"
+  },
+  "homepage": "https://github.com/iamdmitrymayorov/wp-theme-rename-cli.git",
   "preferGlobal": true,
   "bin": {
     "wp-theme-rename": "index.js"
